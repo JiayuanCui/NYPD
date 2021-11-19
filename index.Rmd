@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "NYPD Complaint Data Current"
+author: "Jiayuan Cui, Yujie Zhou, Xuchen Wang"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---

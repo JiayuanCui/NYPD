@@ -1,1 +1,192 @@
 # Missing values
+
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+
+
+```{r, echo=FALSE}
+
+library(patchwork)
+library(d3r)
+library(parcoords)
+library(ggalluvial)
+library(vcd)
+library(grid)
+library(Lock5withR)
+library(GGally)
+library(hexbin)
+library(MASS)
+library(stringr) 
+library(boot)
+library(agridat)
+library(openintro)
+library(ggplot2)
+library(dplyr)
+library(ggridges)
+library(tidyverse)
+library(grid)
+set.seed(5702)
+mycars <- mtcars
+mycars[1:25, "gear"] <- NA
+mycars[10:20, 3:5] <- NA
+for (i in 1:10) mycars[sample(32,1), sample(11,1)] <- NA
+plot_missing <- function(df,percent) {
+  missing_patterns <- data.frame(is.na(df)) %>%
+    group_by_all() %>%
+    count(name = "count", sort = TRUE) %>%
+    ungroup()
+  fullcol<-which(apply(missing_patterns, 1, function(r) any(r==TRUE))==FALSE)
+  has_fullcol=TRUE
+  if(length(fullcol)==0) {
+    has_fullcol=FALSE
+  }
+  first_data<-sapply(df, function(y) sum(length(which(is.na(y)==TRUE))))
+  ord<-order(first_data,decreasing=TRUE)
+  second_data<-missing_patterns[ord]
+  first_data<-first_data[ord]
+  third_data<-missing_patterns$count
+  d1 <- gather(df, col_name, value) %>%
+  group_by(col_name) %>%
+  summarize(missing= mean(is.na(value))*100) %>%
+  arrange(desc(missing))
+  d2 <- third_data/sum(third_data)*100
+  real2<-gather(second_data,col_name, value)
+  real2$row_num <- seq.int(nrow(real2))
+  real2$row_num<-real2$row_num%%length(third_data)
+  real2$row_num[real2$row_num==0]<-length(third_data)
+  real2$row_num<-as.factor(real2$row_num)
+  real2$col_name<-as.factor(real2$col_name)
+  real2$value[real2$row_num==fullcol]<-2
+  real2$value=as.factor(real2$value)
+  lab=sapply((rev(seq.int(length(third_data)))),toString)
+  
+  colors <- c("#cbcbcb","#b69fe6","#b3b3b3")
+  if (!has_fullcol) {
+    colors<-c("#cbcbcb","#b69fe6")
+  }
+  p2<-ggplot(real2, aes(x = fct_relevel(col_name, colnames(df)[ord]), y = fct_relevel(row_num,lab), fill=value)) +
+    geom_tile(color = "white",show_guide = FALSE) +
+    labs(x="variable",y="missing pattern") +
+    scale_fill_manual(values=colors) +
+    annotate("text", x = length(first_data)/2, y = length(third_data)-fullcol+1, label = "complete cases") + theme_grey()+theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+  
+  newdf<-data.frame(num=first_data, key=colnames(df)[ord])
+  p1<-0
+  if(percent) {
+    p1<-d1 %>%
+  ggplot() +
+    geom_bar(aes(fct_relevel(col_name, colnames(df)[ord]),missing), stat = 'identity',fill="#689af5", alpha = 0.7) + scale_y_continuous(breaks = seq(0, 100, by=25),limits=c(0,100)) +
+    labs(x='variable', y="% rows missing:", title='Missing value patterns') +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+  )
+  } else {
+  p1<-newdf %>%
+    ggplot() +
+    geom_bar(aes(fct_relevel(key, colnames(df)[ord]),num), stat = 'identity',fill="#689af5", alpha = 0.7) + 
+    labs(x='variable', y="num rows missing:", title='Missing value patterns') +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+    )
+}
+  
+  colors2<-c("0"="#689af5","1"="#0751d5")
+  if (!has_fullcol) {
+    colors2<-c("#689af5")
+  }
+  p3<-0
+  if(percent) {
+   newdf2<-data.frame(x=as.factor(seq(1,length(d2),1)),num=d2,val=rep(0,length(d2) ))
+    newdf2$val[fullcol]<-1
+    newdf2$val<-as.factor(newdf2$val)
+    p3<-newdf2 %>%
+  ggplot() +
+    geom_bar(aes(reorder(x,rev(seq(1,length(d2),1))),y=num,fill=val),stat = 'identity',position='dodge',alpha=0.7,show.legend = FALSE) +
+  labs(y="% rows")+
+    scale_fill_manual("legend",values =c("0"="#689af5","1"="#0751d5")) + 
+  scale_y_continuous(breaks = seq(0, 100, by=25),limits=c(0,100)) +
+   coord_flip()+
+ 
+    theme(axis.title.y=element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.border = element_rect(colour = "black", fill=NA)
+    
+  ) 
+  } else {
+     newdf2<-data.frame(x=as.factor(seq(1,length(third_data),1)),num=third_data,val=rep(0,length(third_data)))
+  newdf2$val[fullcol]<-1
+  newdf2$val<-as.factor(newdf2$val)
+    
+  p3<-newdf2 %>%
+    ggplot() +
+    geom_bar(aes(reorder(x,rev(seq(1,length(third_data),1))),num,fill=val),stat = 'identity',position='dodge',alpha=0.7,show.legend = FALSE) +
+    labs(y="row count")+
+    scale_fill_manual("legend",values =colors2) +
+    coord_flip() +
+    theme(
+      axis.title.y=element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.border = element_rect(colour = "gray39", fill=NA),
+    axis.text.x = element_text(angle=45, vjust=1, hjust=1)
+  )
+  }
+  
+  plt <- p1+plot_spacer()+p2+p3+plot_layout(width=c(5,1),height=c(1,5))
+  
+  return(plt)
+}
+
+
+```
+
+
+
+
+```{r, echo=FALSE}
+NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYC_numeric<- select_if(NYCcrime, is.numeric)
+
+```
+
+
+Percentage Plot for Numeric columns in NYC crime cases dataset, where each row represents a crime case:
+
+```{r, echo=FALSE,fig.width = 10,fig.height=8}
+plot_missing(NYC_numeric,TRUE)
+```
+
+
+
+
+
+In the missing pattern plot, there are only four missing patterns:
+
+1, missing transit_district and housing_psa
+
+2, missing transit_district
+
+3, missing housing_psa
+
+4, missing housing_psa, transit_district, jurisdiction_code and pd_cd
+
+pd_cd is the internal classification code 
+
+
+We can see that there are no complete cases in this dataset, so all rows have missing values.
+
+It can be observed from the top graph that most of transit_district and housing_psa are missing, which can also be observed in the bottom right graph, where we can see that about 90% of data are missing both transit_district and housing_psa.
+
+Based on these massive missing cases, we can consider removing these two variables.
+
+It can also be observed that there are few cases where we are missing jurisdiction_code and pd_cd, and these two values are missing simultaneously. The jurisdiction code represents the jurisdiction responsible for the crime incident and pd_cd is the internal classification code.
+
+The reason for this phenomenon may be that pd_cd is a code relying on jurisdiction code. The other internal classification code ky_cd which is less granular than pd_cd has no missing values, so it is likely that pd_cd takes jurisdiction in to account when classifying while ky_cd does not.
