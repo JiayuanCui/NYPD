@@ -1,1 +1,298 @@
 # Results
+
+```{r}
+library(patchwork)
+library(d3r)
+library(parcoords)
+library(ggalluvial)
+library(vcd)
+library(grid)
+library(Lock5withR)
+library(GGally)
+library(hexbin)
+library(MASS)
+library(stringr) 
+library(boot)
+library(agridat)
+library(openintro)
+library(ggplot2)
+library(dplyr)
+library(ggridges)
+library(tidyverse)
+library(grid)
+library(data.table)
+```
+
+```{r}
+NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
+```
+
+
+```{r}
+crime <- NYCcrime%>%
+  mutate(ExactDate = as.Date(CMPLNT_FR_DT, format = "%m/%d/%Y" )) %>%
+  filter(ExactDate >= as.Date('2021-01-01'))
+```
+
+```{r}
+crime$OFNS_DESC <- as.factor(crime$OFNS_DESC)
+
+crime <- crime %>%
+  mutate(
+    CrimeType=fct_recode(OFNS_DESC,
+                     "THEFT CRIMES"="PETIT LARCENY",
+                     "HARRASSMENT"="HARRASSMENT 2",
+                     "ASSAULT"="ASSAULT 3 & RELATED OFFENSES",
+                     "CRIMINAL MISCHIEF"="CRIMINAL MISCHIEF & RELATED OF",
+                     "THEFT CRIMES"="GRAND LARCENY",
+                     "ASSAULT"="FELONY ASSAULT",
+                     "OFFENSES AGAINST PUBLIC SENSIBILITIES"="OFF. AGNST PUB ORD SENSBLTY &",
+                     "OTHER"="MISCELLANEOUS PENAL LAW",
+                     "THEFT CRIMES"="ROBBERY",
+                     "THEFT CRIMES"="BURGLARY",
+                     "THEFT CRIMES"="GRAND LARCENY OF MOTOR VEHICLE",
+                     "DRUGS"="DANGEROUS DRUGS",
+                     "TRAFFIC OFFENSES"="VEHICLE AND TRAFFIC LAWS",
+                     "OFFENSES AGAINST PUBLIC ADMINI"="OFFENSES AGAINST PUBLIC ADMINI",
+                     "OTHER"="DANGEROUS WEAPONS",
+                     "SEX CRIMES"="SEX CRIMES",
+                     "FRAUDS"="FORGERY",
+                     "FRAUDS"="THEFT-FRAUD",
+                     "FRAUDS"="FRAUDS",
+                     "FRAUDS"="OFFENSES INVOLVING FRAUD",
+                     "ALCOHOL RELATED CRIMES"="INTOXICATED & IMPAIRED DRIVING",
+                     "TRESPASS"="CRIMINAL TRESPASS",
+                     "THEFT CRIMES"="POSSESSION OF STOLEN PROPERTY",
+                     "TRAFFIC OFFENSES"="UNAUTHORIZED USE OF A VEHICLE",
+                     "ASSAULT"="OFFENSES AGAINST THE PERSON",
+                     "THEFT CRIMES"="RAPE",
+                     "OTHER"="ADMINISTRATIVE CODE",
+                     "ARSON"="ARSON",
+                     "THEFT CRIMES"="OTHER OFFENSES RELATED TO THEF",
+                     "HOMICIDE"="MURDER & NON-NEGL. MANSLAUGHTER",
+                     "OTHER"="NYS LAWS-UNCLASSIFIED FELONY",
+                     "OTHER"="OTHER STATE LAWS (NON PENAL LA",
+                     "THEFT CRIMES"="BURGLAR'S TOOLS",
+                     "THEFT CRIMES"="PETIT LARCENY OF MOTOR VEHICLE",
+                     "GAMBLING"="GAMBLING",
+                     "KIDNAPPING"="KIDNAPPING & RELATED OFFENSES",
+                     "THEFT CRIMES"="THEFT OF SERVICES",
+                     "OTHER"="AGRICULTURE & MRKTS LAW-UNCLASSIFIED",
+                     "ALCOHOL RELATED CRIMES"="ALCOHOLIC BEVERAGE CONTROL LAW",
+                     "OTHER"="OFFENSES AGAINST PUBLIC SAFETY",
+                     "FRAUDS"="FRAUDULENT ACCOSTING",
+                     "OTHER"="ANTICIPATORY OFFENSES",
+                     "SEX CRIMES"="PROSTITUTION & RELATED OFFENSES",
+                     "OTHER"="DISORDERLY CONDUCT",
+                     "SEX CRIMES"="FELONY SEX CRIMES",
+                     "OTHER"="ENDAN WELFARE INCOMP",
+                     "OTHER"="OTHER STATE LAWS",
+                     "OTHER"="NYS LAWS-UNCLASSIFIED VIOLATION",
+                     "OTHER"="CHILD ABANDONMENT/NON SUPPORT",
+                     "KIDNAPPING"="KIDNAPPING",
+                     "OTHER"="OFFENSES RELATED TO CHILDREN",
+                     "OTHER"="JOSTLING",
+                     "ALCOHOL RELATED CRIMES"="INTOXICATED/IMPAIRED DRIVING",
+                     "HOMICIDE"="HOMICIDE-NEGLIGENT,UNCLASSIFIE",
+                     "OTHER"="ESCAPE 3",
+                     "OTHER"="OFFENSES AGAINST MARRIAGE UNCL",
+                     "OTHER"="NEW YORK CITY HEALTH CODE",
+                     "HOMICIDE"="HOMICIDE-NEGLIGENT-VEHICLE",
+                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV"
+                     )) %>%
+  
+  mutate(ExactTime = as.ITime(CMPLNT_FR_TM)) %>%
+  mutate(day=wday(ExactDate,label=TRUE,abbr=TRUE),
+         month=month(ExactDate,label=TRUE,abbr=TRUE)) %>%
+  
+  mutate(Time = case_when(
+    CMPLNT_FR_TM >="00:00:00" & CMPLNT_FR_TM <"01:00:00"~0,
+    CMPLNT_FR_TM >="01:00:00" & CMPLNT_FR_TM <"02:00:00"~1,
+    CMPLNT_FR_TM >="02:00:00" & CMPLNT_FR_TM <"03:00:00"~2,
+    CMPLNT_FR_TM >="03:00:00" & CMPLNT_FR_TM <"04:00:00"~3,
+    CMPLNT_FR_TM >="04:00:00" & CMPLNT_FR_TM <"05:00:00"~4,
+    CMPLNT_FR_TM >="05:00:00" & CMPLNT_FR_TM <"06:00:00"~5,
+    CMPLNT_FR_TM >="06:00:00" & CMPLNT_FR_TM <"07:00:00"~6,
+    CMPLNT_FR_TM >="07:00:00" & CMPLNT_FR_TM <"08:00:00"~7,
+    CMPLNT_FR_TM >="08:00:00" & CMPLNT_FR_TM <"09:00:00"~8,
+    CMPLNT_FR_TM >="09:00:00" & CMPLNT_FR_TM <"10:00:00"~9,
+    CMPLNT_FR_TM >="10:00:00" & CMPLNT_FR_TM <"11:00:00"~10,
+    CMPLNT_FR_TM >="11:00:00" & CMPLNT_FR_TM <"12:00:00"~11,
+    CMPLNT_FR_TM >="12:00:00" & CMPLNT_FR_TM <"13:00:00"~12,
+    CMPLNT_FR_TM >="13:00:00" & CMPLNT_FR_TM <"14:00:00"~13,
+    CMPLNT_FR_TM >="14:00:00" & CMPLNT_FR_TM <"15:00:00"~14,
+    CMPLNT_FR_TM >="15:00:00" & CMPLNT_FR_TM <"16:00:00"~15,
+    CMPLNT_FR_TM >="16:00:00" & CMPLNT_FR_TM <"17:00:00"~16,
+    CMPLNT_FR_TM >="17:00:00" & CMPLNT_FR_TM <"18:00:00"~17,
+    CMPLNT_FR_TM >="18:00:00" & CMPLNT_FR_TM <"19:00:00"~18,
+    CMPLNT_FR_TM >="19:00:00" & CMPLNT_FR_TM <"20:00:00"~19,
+    CMPLNT_FR_TM >="20:00:00" & CMPLNT_FR_TM <"21:00:00"~20,
+    CMPLNT_FR_TM >="21:00:00" & CMPLNT_FR_TM <"22:00:00"~21,
+    CMPLNT_FR_TM >="22:00:00" & CMPLNT_FR_TM <"23:00:00"~22,
+    CMPLNT_FR_TM >="23:00:00" & CMPLNT_FR_TM <"24:00:00" ~23,
+    CMPLNT_FR_TM >="24:00:00" ~24))
+```
+
+
+```{r}
+crimetype <- crime %>%
+  group_by(CrimeType) %>%
+  summarize(count=n()) %>%
+  arrange(count) %>%
+  na_if("") %>%
+  na.omit
+```
+
+
+```{r}
+crimetype %>% 
+  ggplot(aes(x = reorder(CrimeType,count), y = count)) +
+  geom_bar(stat = "identity", fill = "purple") +
+  labs(x ="Crime Type", y = "Number of crimes", title = "Crimes in New York") + 
+  coord_flip()
+```
+
+```{r}
+crimedate <- crime %>%
+  group_by(ExactDate) %>%
+  summarize(count=n())
+```
+
+```{r}
+crimedate %>%
+  ggplot(aes(x=ExactDate, y=count)) +
+  geom_line(colour = "blue") + scale_x_date(date_breaks = "3 week") +
+  labs(x ="Date", y = "Number of crimes", title = "Crimes by day")
+```
+
+```{r}
+library(lubridate)
+crimemonth <- crime %>%
+  group_by(month) %>%
+  summarize(count=n())
+```
+
+
+```{r}
+crimemonth %>% 
+  ggplot(aes(x = month, y = count)) +
+  geom_col() +
+  labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
+```
+
+
+
+```{r}
+crimeday <- crime %>% 
+  group_by(day) %>%
+  summarize(count=n())
+```
+
+
+```{r}
+crimeday %>%
+  ggplot(aes(x = day, y = count)) +
+  geom_col() +
+  labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
+```
+
+
+```{r}
+crimetime <- crime %>%
+  group_by(Time) %>%
+  summarize(count = n()) 
+```
+
+```{r}
+ggplot(crimetime, aes(x = Time, y = count)) +
+  geom_line(colour = "blue", size = 1) +
+  scale_x_continuous(breaks=c(0:23)) +
+  ggtitle("The total number of crimes by time of day")
+```
+
+
+```{r}
+borough <- crime %>%
+  select(BORO_NM,Longitude,Latitude,ExactDate) %>%
+  na_if("") %>%
+  na.omit %>%
+  group_by(BORO_NM)  
+
+colnames(borough) <- c('Borough','Longitude','Latitude',"ExactDate")
+borough
+```
+
+```{r}
+borough %>%
+  ggplot(aes(x = ExactDate)) +
+  geom_histogram(binwidth=5) + scale_x_date(date_breaks = "3 week",date_labels =("%b%d")) + facet_wrap(~Borough)
+```
+
+
+```{r}
+ggplot(borough, aes(x = Longitude, y = Latitude)) + geom_point(aes(colour = factor(Borough)), size = 0.1) + 
+  theme_light(base_size = 10) + xlab("Longitude") + ylab("Latitude") +
+  ggtitle("Borough") + theme(plot.title=element_text(size = 16))
+```
+
+```{r}
+crime1 <- crime %>%
+  group_by(CrimeType,Time) %>%
+  summarise(count=n()) %>%
+  na_if("") %>%
+  na.omit
+```
+
+```{r}
+crime1 %>%
+  ggplot(aes(x=CrimeType, y=Time)) +
+  geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
+  labs(x="Crime Type", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip()
+```
+
+```{r}
+crime2 <- crime %>%
+  group_by(CrimeType,BORO_NM) %>%
+  summarise(count=n()) %>%
+  na_if("") %>%
+  na.omit
+```
+
+```{r}
+crime2 %>%
+  ggplot(aes(x=CrimeType, y=BORO_NM)) +
+  geom_tile(aes(fill=count)) +
+  labs(x="Crime Type", y = "Borough", title="Crime Type VS Borough") + coord_flip()
+```
+
+```{r}
+crime3 <- crime %>%
+  group_by(BORO_NM,Time) %>%
+  summarise(count=n()) %>%
+  na_if("") %>%
+  na.omit
+```
+
+```{r}
+crime3 %>%
+  ggplot(aes(x=BORO_NM, y=Time)) +
+  geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
+  labs(x="Crime", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip()
+```
+
+```{r}
+crime4 <- crime %>%
+  group_by(CrimeType,day) %>%
+  summarise(count=n()) %>%
+  na_if("") %>%
+  na.omit
+```
+
+```{r}
+crime4 %>%
+  ggplot(aes(x=CrimeType, y=day)) +
+  geom_tile(aes(fill=count)) +
+  labs(x="Crime", y = "Day of week", title="Crime Type VS Day of week") + coord_flip()
+```
+
+
