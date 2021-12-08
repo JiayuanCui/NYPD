@@ -1,1 +1,139 @@
 # Data transformation
+
+NYC Open Data provides variety of formats of dataset. Since the data can be exported from the website as a .csv file directly, we read the file using the read.csv method and store the data in the dataframe NYCcrime. 
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(ggridges)
+library(tidyverse)
+library(data.table)
+```
+
+```{r}
+NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
+```
+
+The dataset has more than 200,000 rows, and we are interested in the data for this year, so we extracted data from Jan 1, 2021.
+Before filtering the data, we check the data structure using str() command. 
+CMPLNT_FR_DT is a column of exact date of occurrence for the reported event. 
+```{r}
+str(NYCcrime)
+```
+
+We convert CMPLNT_FR_DT from character data to dates using as.date() to enable easier filter and management of the data. 
+```{r}
+crime <- NYCcrime%>%
+  mutate(ExactDate = as.Date(CMPLNT_FR_DT, format = "%m/%d/%Y" )) %>%
+  filter(ExactDate >= as.Date('2021-01-01')) 
+  
+crime %>% select(CMPLNT_NUM,ExactDate)
+```
+
+We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 59 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
+
+```{r}
+library(lubridate)
+crime$OFNS_DESC <- as.factor(crime$OFNS_DESC)
+
+crime <- crime %>%
+  mutate(
+    CrimeType=fct_recode(OFNS_DESC,
+                     "THEFT CRIMES"="PETIT LARCENY",
+                     "HARRASSMENT"="HARRASSMENT 2",
+                     "ASSAULT"="ASSAULT 3 & RELATED OFFENSES",
+                     "CRIMINAL MISCHIEF"="CRIMINAL MISCHIEF & RELATED OF",
+                     "THEFT CRIMES"="GRAND LARCENY",
+                     "ASSAULT"="FELONY ASSAULT",
+                     "OFFENSES AGAINST PUBLIC SENSIBILITIES"="OFF. AGNST PUB ORD SENSBLTY &",
+                     "OTHER"="MISCELLANEOUS PENAL LAW",
+                     "THEFT CRIMES"="ROBBERY",
+                     "THEFT CRIMES"="BURGLARY",
+                     "THEFT CRIMES"="GRAND LARCENY OF MOTOR VEHICLE",
+                     "DRUGS"="DANGEROUS DRUGS",
+                     "TRAFFIC OFFENSES"="VEHICLE AND TRAFFIC LAWS",
+                     "OFFENSES AGAINST PUBLIC ADMINI"="OFFENSES AGAINST PUBLIC ADMINI",
+                     "OTHER"="DANGEROUS WEAPONS",
+                     "SEX CRIMES"="SEX CRIMES",
+                     "FRAUDS"="FORGERY",
+                     "FRAUDS"="THEFT-FRAUD",
+                     "FRAUDS"="FRAUDS",
+                     "FRAUDS"="OFFENSES INVOLVING FRAUD",
+                     "ALCOHOL RELATED CRIMES"="INTOXICATED & IMPAIRED DRIVING",
+                     "TRESPASS"="CRIMINAL TRESPASS",
+                     "THEFT CRIMES"="POSSESSION OF STOLEN PROPERTY",
+                     "TRAFFIC OFFENSES"="UNAUTHORIZED USE OF A VEHICLE",
+                     "ASSAULT"="OFFENSES AGAINST THE PERSON",
+                     "THEFT CRIMES"="RAPE",
+                     "OTHER"="ADMINISTRATIVE CODE",
+                     "ARSON"="ARSON",
+                     "THEFT CRIMES"="OTHER OFFENSES RELATED TO THEF",
+                     "HOMICIDE"="MURDER & NON-NEGL. MANSLAUGHTER",
+                     "OTHER"="NYS LAWS-UNCLASSIFIED FELONY",
+                     "OTHER"="OTHER STATE LAWS (NON PENAL LA",
+                     "THEFT CRIMES"="BURGLAR'S TOOLS",
+                     "THEFT CRIMES"="PETIT LARCENY OF MOTOR VEHICLE",
+                     "GAMBLING"="GAMBLING",
+                     "KIDNAPPING"="KIDNAPPING & RELATED OFFENSES",
+                     "THEFT CRIMES"="THEFT OF SERVICES",
+                     "OTHER"="AGRICULTURE & MRKTS LAW-UNCLASSIFIED",
+                     "ALCOHOL RELATED CRIMES"="ALCOHOLIC BEVERAGE CONTROL LAW",
+                     "OTHER"="OFFENSES AGAINST PUBLIC SAFETY",
+                     "FRAUDS"="FRAUDULENT ACCOSTING",
+                     "OTHER"="ANTICIPATORY OFFENSES",
+                     "SEX CRIMES"="PROSTITUTION & RELATED OFFENSES",
+                     "OTHER"="DISORDERLY CONDUCT",
+                     "SEX CRIMES"="FELONY SEX CRIMES",
+                     "OTHER"="ENDAN WELFARE INCOMP",
+                     "OTHER"="OTHER STATE LAWS",
+                     "OTHER"="NYS LAWS-UNCLASSIFIED VIOLATION",
+                     "OTHER"="CHILD ABANDONMENT/NON SUPPORT",
+                     "KIDNAPPING"="KIDNAPPING",
+                     "OTHER"="OFFENSES RELATED TO CHILDREN",
+                     "OTHER"="JOSTLING",
+                     "ALCOHOL RELATED CRIMES"="INTOXICATED/IMPAIRED DRIVING",
+                     "HOMICIDE"="HOMICIDE-NEGLIGENT,UNCLASSIFIE",
+                     "OTHER"="ESCAPE 3",
+                     "OTHER"="OFFENSES AGAINST MARRIAGE UNCL",
+                     "OTHER"="NEW YORK CITY HEALTH CODE",
+                     "HOMICIDE"="HOMICIDE-NEGLIGENT-VEHICLE",
+                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV"
+                     ))
+crime %>% select(OFNS_DESC,CrimeType,ExactDate)
+```
+
+In order to look at how crimes are distributed with respect to time of day, day of week, and month, we create two columns day and month to show day of week and month of year respectively based on dates.
+CMPLNT_FR_TM is a column of exact time of occurrence for the reported event. We convert CMPLNT_FR_TM from character data to ITime using as.ITime(). We mutate a new column Time to show the time of day. If a crime occurs between time “X:00” to time “X:59”, it shows "X" in the column. 
+```{r}
+crime <- crime %>%
+  mutate(day=wday(ExactDate,label=TRUE,abbr=TRUE),
+         month=month(ExactDate,label=TRUE,abbr=TRUE)) %>%
+  mutate(ExactTime = as.ITime(CMPLNT_FR_TM)) %>%
+  mutate(Time = case_when(
+    CMPLNT_FR_TM >="00:00:00" & CMPLNT_FR_TM <"01:00:00"~0,
+    CMPLNT_FR_TM >="01:00:00" & CMPLNT_FR_TM <"02:00:00"~1,
+    CMPLNT_FR_TM >="02:00:00" & CMPLNT_FR_TM <"03:00:00"~2,
+    CMPLNT_FR_TM >="03:00:00" & CMPLNT_FR_TM <"04:00:00"~3,
+    CMPLNT_FR_TM >="04:00:00" & CMPLNT_FR_TM <"05:00:00"~4,
+    CMPLNT_FR_TM >="05:00:00" & CMPLNT_FR_TM <"06:00:00"~5,
+    CMPLNT_FR_TM >="06:00:00" & CMPLNT_FR_TM <"07:00:00"~6,
+    CMPLNT_FR_TM >="07:00:00" & CMPLNT_FR_TM <"08:00:00"~7,
+    CMPLNT_FR_TM >="08:00:00" & CMPLNT_FR_TM <"09:00:00"~8,
+    CMPLNT_FR_TM >="09:00:00" & CMPLNT_FR_TM <"10:00:00"~9,
+    CMPLNT_FR_TM >="10:00:00" & CMPLNT_FR_TM <"11:00:00"~10,
+    CMPLNT_FR_TM >="11:00:00" & CMPLNT_FR_TM <"12:00:00"~11,
+    CMPLNT_FR_TM >="12:00:00" & CMPLNT_FR_TM <"13:00:00"~12,
+    CMPLNT_FR_TM >="13:00:00" & CMPLNT_FR_TM <"14:00:00"~13,
+    CMPLNT_FR_TM >="14:00:00" & CMPLNT_FR_TM <"15:00:00"~14,
+    CMPLNT_FR_TM >="15:00:00" & CMPLNT_FR_TM <"16:00:00"~15,
+    CMPLNT_FR_TM >="16:00:00" & CMPLNT_FR_TM <"17:00:00"~16,
+    CMPLNT_FR_TM >="17:00:00" & CMPLNT_FR_TM <"18:00:00"~17,
+    CMPLNT_FR_TM >="18:00:00" & CMPLNT_FR_TM <"19:00:00"~18,
+    CMPLNT_FR_TM >="19:00:00" & CMPLNT_FR_TM <"20:00:00"~19,
+    CMPLNT_FR_TM >="20:00:00" & CMPLNT_FR_TM <"21:00:00"~20,
+    CMPLNT_FR_TM >="21:00:00" & CMPLNT_FR_TM <"22:00:00"~21,
+    CMPLNT_FR_TM >="22:00:00" & CMPLNT_FR_TM <"23:00:00"~22,
+    CMPLNT_FR_TM >="23:00:00" & CMPLNT_FR_TM <"24:00:00" ~23,
+    CMPLNT_FR_TM >="24:00:00" ~24))
+crime %>% select(CrimeType,ExactDate,ExactTime,day,month,Time)
+```

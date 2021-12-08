@@ -1,2 +1,3 @@
 # Data sources
-
+NYPD Complaint Data Current (Year To Date) is a dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021). 
+Crime data for city of NYC available from NYC Open Data at: https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243 

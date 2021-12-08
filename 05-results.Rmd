@@ -220,7 +220,6 @@ borough <- crime %>%
   group_by(BORO_NM)  
 
 colnames(borough) <- c('Borough','Longitude','Latitude',"ExactDate")
-borough
 ```
 
 ```{r}
