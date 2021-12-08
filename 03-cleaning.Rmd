@@ -30,7 +30,7 @@ crime <- NYCcrime%>%
 crime %>% select(CMPLNT_NUM,ExactDate)
 ```
 
-We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 59 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
+We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 60 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
 
 ```{r}
 library(lubridate)
@@ -97,7 +97,9 @@ crime <- crime %>%
                      "OTHER"="OFFENSES AGAINST MARRIAGE UNCL",
                      "OTHER"="NEW YORK CITY HEALTH CODE",
                      "HOMICIDE"="HOMICIDE-NEGLIGENT-VEHICLE",
-                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV"
+                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV",
+                     "GAMBLING"="LOITERING/GAMBLING (CARDS, DIC",
+                     "OTHER"="OTHER STATE LAWS (NON PENAL LAW)"
                      ))
 crime %>% select(OFNS_DESC,CrimeType,ExactDate)
 ```
