@@ -50,7 +50,7 @@ library(data.table)
 ```
 
 ```{r}
-NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
 ```
 
 The dataset has more than 200,000 rows, and we are interested in the data for this year, so we extracted data from Jan 1, 2021.
