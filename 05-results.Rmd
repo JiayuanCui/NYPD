@@ -10,7 +10,7 @@ library(data.table)
 ```
 
 ```{r}
-NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
+NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
 ```
 
 
