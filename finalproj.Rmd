@@ -50,7 +50,7 @@ library(data.table)
 ```
 
 ```{r}
-NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
 ```
 
 The dataset has more than 200,000 rows, and we are interested in the data for this year, so we extracted data from Jan 1, 2021.
@@ -69,7 +69,7 @@ crime <- NYCcrime%>%
 crime %>% select(CMPLNT_NUM,ExactDate)
 ```
 
-We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 59 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
+We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 60 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
 
 ```{r}
 library(lubridate)
@@ -136,7 +136,9 @@ crime <- crime %>%
                      "OTHER"="OFFENSES AGAINST MARRIAGE UNCL",
                      "OTHER"="NEW YORK CITY HEALTH CODE",
                      "HOMICIDE"="HOMICIDE-NEGLIGENT-VEHICLE",
-                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV"
+                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV",
+                     "GAMBLING"="LOITERING/GAMBLING (CARDS, DIC",
+                     "OTHER"="OTHER STATE LAWS (NON PENAL LAW)"
                      ))
 crime %>% select(OFNS_DESC,CrimeType,ExactDate)
 ```
@@ -340,7 +342,7 @@ plot_missing <- function(df,percent) {
 
 
 ```{r, echo=FALSE}
-NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
 NYC_numeric<- select_if(NYCcrime, is.numeric)
 
 ```
@@ -391,20 +393,6 @@ knitr::opts_chunk$set(
 # Results
 
 ```{r}
-library(patchwork)
-library(d3r)
-library(parcoords)
-library(ggalluvial)
-library(vcd)
-library(grid)
-library(Lock5withR)
-library(GGally)
-library(hexbin)
-library(MASS)
-library(stringr) 
-library(boot)
-library(agridat)
-library(openintro)
 library(ggplot2)
 library(dplyr)
 library(ggridges)
@@ -414,7 +402,7 @@ library(data.table)
 ```
 
 ```{r}
-NYCcrime<-read.csv("C:/Users/Dell/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv")
+NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
 ```
 
 
@@ -489,7 +477,9 @@ crime <- crime %>%
                      "OTHER"="OFFENSES AGAINST MARRIAGE UNCL",
                      "OTHER"="NEW YORK CITY HEALTH CODE",
                      "HOMICIDE"="HOMICIDE-NEGLIGENT-VEHICLE",
-                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV"
+                     "OTHER"="DISRUPTION OF A RELIGIOUS SERV",
+                     "GAMBLING"="LOITERING/GAMBLING (CARDS, DIC",
+                     "OTHER"="OTHER STATE LAWS (NON PENAL LAW)"
                      )) %>%
   
   mutate(ExactTime = as.ITime(CMPLNT_FR_TM)) %>%
@@ -542,6 +532,7 @@ crimetype %>%
   labs(x ="Crime Type", y = "Number of crimes", title = "Crimes in New York") + 
   coord_flip()
 ```
+Theft, harassment, assault and criminal mischief occurs much frequently in NYC.  
 
 ```{r}
 crimedate <- crime %>%
@@ -552,9 +543,10 @@ crimedate <- crime %>%
 ```{r}
 crimedate %>%
   ggplot(aes(x=ExactDate, y=count)) +
-  geom_line(colour = "blue") + scale_x_date(date_breaks = "3 week") +
+  geom_line(colour = "blue") + scale_x_date(date_breaks = "1 month") +
   labs(x ="Date", y = "Number of crimes", title = "Crimes by day")
 ```
+It can been seen most crime peaks occurred in the beginning of a month and the middle of a month. Crime incidents happened more frequently in summer month.
 
 ```{r}
 library(lubridate)
@@ -572,13 +564,11 @@ crimemonth %>%
 ```
 
 
-
 ```{r}
 crimeday <- crime %>% 
   group_by(day) %>%
   summarize(count=n())
 ```
-
 
 ```{r}
 crimeday %>%
@@ -586,7 +576,7 @@ crimeday %>%
   geom_col() +
   labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
 ```
-
+Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Fridays and summer months have higher occurrence of crime incidents with respect to other corresponding time periods.
 
 ```{r}
 crimetime <- crime %>%
@@ -600,7 +590,7 @@ ggplot(crimetime, aes(x = Time, y = count)) +
   scale_x_continuous(breaks=c(0:23)) +
   ggtitle("The total number of crimes by time of day")
 ```
-
+The latter parts of the day have higher occurrence of crime incidents. There is a peak of crime at hour 16, indicating more incidents take place during the periods 4:00pm - 4:59pm. There are less incidents in the morning periods (1am - 7am). In particular, very few crime incidents happen during the period of 5am.
 
 ```{r}
 borough <- crime %>%
@@ -617,13 +607,14 @@ borough %>%
   ggplot(aes(x = ExactDate)) +
   geom_histogram(binwidth=5) + scale_x_date(date_breaks = "3 week",date_labels =("%b%d")) + facet_wrap(~Borough)
 ```
-
+Brooklyn has highest number of crime, and Staten Island has lowest. 
 
 ```{r}
 ggplot(borough, aes(x = Longitude, y = Latitude)) + geom_point(aes(colour = factor(Borough)), size = 0.1) + 
   theme_light(base_size = 10) + xlab("Longitude") + ylab("Latitude") +
   ggtitle("Borough") + theme(plot.title=element_text(size = 16))
 ```
+There are lesser points landing in Staten Island area than other boroughs. 
 
 ```{r}
 crime1 <- crime %>%
@@ -639,6 +630,7 @@ crime1 %>%
   geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
   labs(x="Crime Type", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip()
 ```
+The first heat map shows the relationship between crime type and time of day, that is how different crimes vary by different times of the day. It can be found the crime type of theft crimes is the most common crime type with more than 4000 incidents per hours during the period of peak hours from 12pm to 18pm. Harassment(more prevalent in the afternoon), criminal mischief, and assault(more prevalent in the evening and at night) are also common during the day in NYC.
 
 ```{r}
 crime2 <- crime %>%
@@ -654,6 +646,7 @@ crime2 %>%
   geom_tile(aes(fill=count)) +
   labs(x="Crime Type", y = "Borough", title="Crime Type VS Borough") + coord_flip()
 ```
+The second heat map shows the relationship between crime type and borough.Theft crimes, the most common incident, happens frequently in all borough, but most frequently in Manhattan with more than 30000 incidents. It can also be observed that harassment, criminal mischief, and assault are the common types of crime across boroughs, and they happens most frequently in Brooklyn.
 
 ```{r}
 crime3 <- crime %>%
@@ -667,8 +660,9 @@ crime3 <- crime %>%
 crime3 %>%
   ggplot(aes(x=BORO_NM, y=Time)) +
   geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
-  labs(x="Crime", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip()
+  labs(x="Borough", y = "Time of day", title="Borough VS Time of Day") + coord_flip()
 ```
+The third heat map shows the relationship between borough and time of day. It turns out that Brooklyn is the most dangerous borough and there are more than 3000 incidents per hour during periods of 12pm-12:59pm and 4pm-6:59pm. In addition, Manhattan also has high number of crime incidents during 12pm-6:59pm.
 
 ```{r}
 crime4 <- crime %>%
@@ -682,9 +676,9 @@ crime4 <- crime %>%
 crime4 %>%
   ggplot(aes(x=CrimeType, y=day)) +
   geom_tile(aes(fill=count)) +
-  labs(x="Crime", y = "Day of week", title="Crime Type VS Day of week") + coord_flip()
+  labs(x="Crime Type", y = "Day of week", title="Crime Type VS Day of week") + coord_flip()
 ```
-
+The fourth heat map shows the relationship between crime type and day of week. It can be found the crime type of theft crimes is still the most common crime type with higher number of incidents on weekdays than weekends. Whereas, assaults are more prevalent on weekends, and harassment happens frequently almsot every day.
 
 
 <!--chapter:end:05-results.Rmd-->
