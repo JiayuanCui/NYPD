@@ -202,7 +202,7 @@ The latter parts of the day have higher occurrence of crime incidents. There is 
 
 ```{r}
 borough <- crime %>%
-  select(BORO_NM,Longitude,Latitude,ExactDate) %>%
+  dplyr::select(BORO_NM,Longitude,Latitude,ExactDate) %>%
   na_if("") %>%
   na.omit %>%
   group_by(BORO_NM)  
