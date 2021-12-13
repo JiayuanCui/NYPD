@@ -16,3 +16,5 @@ In this project, our group have thoroughly analyzed the NYPD Complaint Data prov
 3. How does crime rate changes by day of week?
 4. How does crime rate changes by time of day?
 5. How do crime patterns in boroughs based on timings of the crimes, days of the crimes, and types of crimes?
+
+Our final goal for this project is not only to help people living in New York City to identity and reduce the risk to encounter crimes, but also help NYPD and national institutions to deploy and allocate resources and capital in highly dangerous areas to control crimes. 
