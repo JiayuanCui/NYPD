@@ -9,10 +9,4 @@ In our project, since we are analyzing the most recent crimes in New York, we su
 
 As we checked the data types, we found the there are only 3 types of the variables: character, number, and integer. In order to better analyze the crimes, we converted the character type of data time to date type.
 
-Another problem with the dataset is there are a number of missing values for part of the variables, such as BORO_NM (The name of the borough in which the incident occurred). Thus, in the following work, we will only extract variables with complete information and draw different plots to identity the questions below:
-
-1. Which type of crimes occurred most frequently in New York in year 2021?
-2. How does crime rate changes by day?
-3. How does crime rate changes by day of week?
-4. How does crime rate changes by time of day?
-5. How do crime patterns in boroughs based on timings of the crimes, days of the crimes, and types of crimes?
+Another problem with the dataset is there are a number of missing values for part of the variables, such as BORO_NM (The name of the borough in which the incident occurred). Thus, in the following work, we will only extract variables with complete information and draw different plots to show relations between different varibales. 
