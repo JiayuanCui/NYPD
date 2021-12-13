@@ -10,7 +10,7 @@ library(data.table)
 ```
 
 ```{r}
-NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYCcrime<-read.csv("~/Desktop/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
 ```
 
 
@@ -185,6 +185,7 @@ crimeday %>%
   labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
 ```
 Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Fridays and summer months have higher occurrence of crime incidents with respect to other corresponding time periods.
+
 
 ```{r}
 crimetime <- crime %>%
