@@ -3,10 +3,22 @@
 Oour group downloaded NYPD Complaint Data Current (Year To Date) dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021). 
 Crime data for city of NYC available from NYC Open Data at: https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243 
 
-There are total of 324k rows and 36 columns in this dataset. The 36 variables ranges from exact locations of the occurrences to exact time of the occurrences. 
+There are total of 324k rows and 36 columns in this dataset. The 36 variables ranges from exact locations of the occurrences to exact time of the occurrences. Details for key attributes are listed below:
+
+CMPLNT_NUM - Randomly generated persistent ID for each complaint
+BORO_NM	- The name of the borough in which the incident occurred
+CMPLNT_FR_DT - Exact date of occurrence for the reported event
+CMPLNT_FR_TM - Exact time of occurrence for the reported event
+LAW_CAT_CD - Level of offense: felony, misdemeanor, violation
+OFNS_DESC	- Description of offense corresponding with key code
+PATROL_BORO - The name of the patrol borough in which the incident occurred
+TRANSIT_DISTRICT - Transit district in which the offense occurred
+VIC_AGE_GROUP	- Victim’s Age Group
+VIC_RACE - Victim’s Race Description
+VIC_SEX	- Victim’s Sex Description
 
 In our project, since we are analyzing the most recent crimes in New York, we subset data into more manageable smaller dataset with observations started from Jan 1, 2021 instead of the complete dataset. 
 
-As we checked the data types, we found the there are only 3 types of the variables: character, number, and integer. In order to better analyze the crimes, we converted the character type of data time to date type.
+As we checked the data types, we found the there are only 3 types of the variables: character, number, and integer. In order to better analyze the crimes, we converted the character type of data time to date type. To make offense types more readable and understandable, we categorized the OFNS_DESC to more generalized level so that our graphs would provide a better visualization.
 
-Another problem with the dataset is there are a number of missing values for part of the variables, such as BORO_NM (The name of the borough in which the incident occurred). Thus, in the following work, we will only extract variables with complete information and draw different plots to show relations between different varibales. 
+Another problem with the dataset is there are a number of missing values for part of the variables, such as HOUSING_PSA (Development Level Code). Thus, in the following work, we will only extract variables with complete information and draw different plots to show relations between different varibales. 
