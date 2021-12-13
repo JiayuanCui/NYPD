@@ -1,2 +1,17 @@
 # Conclusion
 
+Working on this project, we have applied different data exploratory methods learned in class and from other sources online: heatmaps, histograms, line plots, bar plots, 2-D and 3-D plots, etc. It is very important to select the right visualization tool according to different nature of data and effects we want provided to readers. For example, when we intended to see how crime rate fluctuated under the changes of two independent variables, we will use heatmaps to plot 3-dimensional plots. Meanwhile, we built a 3d interactive plots for high-dimensional data by using D3 to make readers visualization experience more immersive and straightforward. Dealing with such large dataset, we also understand the importance of transforming and cleaning data to enable readers understand and see data easier and faster. 
+
+The following is some findings we obtained from this project:
+
+1. Summer time, beginning of each month, Friday, and afternoon are the time with higher risk of crime occurrence. It is not not hard to find the time slots are the time people are being more likely to stay outside. Thus, people should pay attention when there are denser population accumulated. 
+
+2. There are relatively higher number of crimes conducted in Brooklyn.
+
+3. Theft crimes are the most common crime types during 12:00pm to 18:00pm; harassment, criminal mischief, and assault are the common types of crime during afternnons and evenings in te city. 
+
+Other key deliverables please refer to the results secction above.  
+
+
+
+
