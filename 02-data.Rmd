@@ -1,3 +1,26 @@
 # Data sources
-NYPD Complaint Data Current (Year To Date) is a dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021). 
+
+Our group downloaded NYPD Complaint Data Current (Year To Date) dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021). 
 Crime data for city of NYC available from NYC Open Data at: https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243 
+
+There are total of 324k rows and 36 columns in this dataset. The 36 variables ranges from exact locations of the occurrences to exact time of the occurrences. Details for key attributes are listed below:
+
+
+BORO_NM	- The name of the borough in which the incident occurred
+
+CMPLNT_FR_DT - Exact date of occurrence for the reported event
+
+CMPLNT_FR_TM - Exact time of occurrence for the reported event
+
+OFNS_DESC	- Description of offense corresponding with key code
+
+LONGITUDE - longitude of the crime case
+
+LATITUDE - latitude of the crime case
+
+
+As we checked the data types, we found the there are only 3 types of the variables: character, number, and integer. In order to better analyze the crimes, we converted the character type of data time to date type. To make offense types more readable and understandable, we categorized the OFNS_DESC to more generalized level so that our graphs would provide a better visualization.
+
+Data for November and December are missing since they have not been published. Data for October is partial by the same reason. So in some plots we may only include the first 9 months
+
+Another problem with the dataset is there are a number of missing values for part of the variables, this would be discussed in more details in section 4. 

@@ -3,5 +3,9 @@ data-sources
 data-transformation
 missing-values
 results
+overview
+crime-cases-and-time
+crime-cases-and-location
+correlations
 interactive-component
 conclusion

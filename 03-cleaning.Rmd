@@ -2,6 +2,8 @@
 
 NYC Open Data provides variety of formats of dataset. Since the data can be exported from the website as a .csv file directly, we read the file using the read.csv method and store the data in the dataframe NYCcrime. 
 
+Press View Source to see the code for data transformation.
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -17,17 +19,18 @@ NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_
 The dataset has more than 200,000 rows, and we are interested in the data for this year, so we extracted data from Jan 1, 2021.
 Before filtering the data, we check the data structure using str() command. 
 CMPLNT_FR_DT is a column of exact date of occurrence for the reported event. 
+
 ```{r}
 str(NYCcrime)
 ```
 
 We convert CMPLNT_FR_DT from character data to dates using as.date() to enable easier filter and management of the data. 
+
 ```{r}
 crime <- NYCcrime%>%
   mutate(ExactDate = as.Date(CMPLNT_FR_DT, format = "%m/%d/%Y" )) %>%
   filter(ExactDate >= as.Date('2021-01-01')) 
-  
-crime %>% dplyr::select(CMPLNT_NUM,ExactDate)
+
 ```
 
 We want to show the number of crimes in each of the categories in NYC. OFNS_DESC is a column with description of offense corresponding with key code. OFNS_DESC contains 60 crime types. We combine two or more similar categories into one to reduce the the number of crime types to make the analysis more manageable.
@@ -101,11 +104,12 @@ crime <- crime %>%
                      "GAMBLING"="LOITERING/GAMBLING (CARDS, DIC",
                      "OTHER"="OTHER STATE LAWS (NON PENAL LAW)"
                      ))
-crime %>% dplyr::select(OFNS_DESC,CrimeType,ExactDate)
+
 ```
 
 In order to look at how crimes are distributed with respect to time of day, day of week, and month, we create two columns day and month to show day of week and month of year respectively based on dates.
 CMPLNT_FR_TM is a column of exact time of occurrence for the reported event. We convert CMPLNT_FR_TM from character data to ITime using as.ITime(). We mutate a new column Time to show the time of day. If a crime occurs between time “X:00” to time “X:59”, it shows "X" in the column. 
+
 ```{r}
 crime <- crime %>%
   mutate(day=wday(ExactDate,label=TRUE,abbr=TRUE),
@@ -137,5 +141,5 @@ crime <- crime %>%
     CMPLNT_FR_TM >="22:00:00" & CMPLNT_FR_TM <"23:00:00"~22,
     CMPLNT_FR_TM >="23:00:00" & CMPLNT_FR_TM <"24:00:00" ~23,
     CMPLNT_FR_TM >="24:00:00" ~24))
-crime %>% dplyr::select(CrimeType,ExactDate,ExactTime,day,month,Time)
+
 ```

@@ -24,7 +24,7 @@
 <meta name="author" content="Jiayuan Cui, Yujie Zhou, Xuchen Wang" />
 
 
-<meta name="date" content="2021-12-09" />
+<meta name="date" content="2021-12-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -76,7 +76,12 @@
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
-<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
+<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a><ul>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#overview"><i class="fa fa-check"></i><b>5.1</b> Overview</a></li>
+<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#crime-cases-and-time"><i class="fa fa-check"></i><b>5.2</b> Crime Cases and Time</a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#crime-cases-and-location"><i class="fa fa-check"></i><b>5.3</b> Crime Cases and Location</a></li>
+<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#correlations"><i class="fa fa-check"></i><b>5.4</b> Correlations</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -100,18 +105,43 @@
             <section class="normal" id="section-">
 <div id="results" class="section level1">
 <h1><span class="header-section-number">Chapter 5</span> Results</h1>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-20-1.png" width="672" /> Theft, harassment, assault and criminal mischief occurs much frequently in NYC.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-22-1.png" width="672" /> It can been seen most crime peaks occurred in the beginning of a month and the middle of a month. Crime incidents happened more frequently in summer month.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-26-1.png" width="672" /> Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Fridays and summer months have higher occurrence of crime incidents with respect to other corresponding time periods.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-28-1.png" width="672" /> The latter parts of the day have higher occurrence of crime incidents. There is a peak of crime at hour 16, indicating more incidents take place during the periods 4:00pm - 4:59pm. There are less incidents in the morning periods (1am - 7am). In particular, very few crime incidents happen during the period of 5am.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-30-1.png" width="672" /> Brooklyn has highest number of crime, and Staten Island has lowest.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-31-1.png" width="672" /> There are lesser points landing in Staten Island area than other boroughs.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="672" /> The first heat map shows the relationship between crime type and time of day, that is how different crimes vary by different times of the day. It can be found the crime type of theft crimes is the most common crime type with more than 4000 incidents per hours during the period of peak hours from 12pm to 18pm. Harassment(more prevalent in the afternoon), criminal mischief, and assault(more prevalent in the evening and at night) are also common during the day in NYC.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-35-1.png" width="672" /> The second heat map shows the relationship between crime type and borough.Theft crimes, the most common incident, happens frequently in all borough, but most frequently in Manhattan with more than 30000 incidents. It can also be observed that harassment, criminal mischief, and assault are the common types of crime across boroughs, and they happens most frequently in Brooklyn.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-37-1.png" width="672" /> The third heat map shows the relationship between borough and time of day. It turns out that Brooklyn is the most dangerous borough and there are more than 3000 incidents per hour during periods of 12pm-12:59pm and 4pm-6:59pm. In addition, Manhattan also has high number of crime incidents during 12pm-6:59pm.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-39-1.png" width="672" /> The fourth heat map shows the relationship between crime type and day of week. It can be found the crime type of theft crimes is still the most common crime type with higher number of incidents on weekdays than weekends. Whereas, assaults are more prevalent on weekends, and harassment happens frequently almsot every day.</p>
+<div id="overview" class="section level2">
+<h2><span class="header-section-number">5.1</span> Overview</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-29-1.png" width="1056" /></p>
+<p>Theft, harassment, assault and criminal mischief occurs much more frequently in NYC.</p>
+</div>
+<div id="crime-cases-and-time" class="section level2">
+<h2><span class="header-section-number">5.2</span> Crime Cases and Time</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-31-1.png" width="1056" /></p>
+<p>It can been seen most crime peaks occurred in the beginning of a month and the middle of a month. Crime incidents happened more frequently in summer month.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="1056" /></p>
+<p>Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Summer months have higher occurrence of crime incidents with respect to other corresponding time periods.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-35-1.png" width="1056" /></p>
+<p>The latter parts of the day have higher occurrence of crime incidents. There is a peak of crime at hour 16, indicating more incidents take place during the periods 4:00pm - 4:59pm. There are less incidents in the morning periods (1am - 7am). In particular, very few crime incidents happen during the period of 5am.</p>
+</div>
+<div id="crime-cases-and-location" class="section level2">
+<h2><span class="header-section-number">5.3</span> Crime Cases and Location</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-37-1.png" width="1056" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-38-1.png" width="1056" /></p>
+<p>Brooklyn has highest number of crime, and Staten Island has lowest.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-39-1.png" width="1056" /></p>
+<p>A New York City map by plotting each individual crime cases.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-40-1.png" width="1056" /></p>
+<p>A heat map for all the crime cases. It can be seen that many regions in Brooklyn and Manhattan have very high crime counts.</p>
+</div>
+<div id="correlations" class="section level2">
+<h2><span class="header-section-number">5.4</span> Correlations</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-42-1.png" width="1056" /></p>
+<p>From the parallel coordinates plot, we can observe that the pattern of Brooklyn and Queens are very similar, so they may form a cluster by the distribution of crime categories.</p>
+<p>Also, there seems to be a positive correlation between trepass and theft crimes, trepass and frauds. Police may need to find out the reason for such correlation.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-44-1.png" width="1056" /></p>
+<p>The first heat map shows the relationship between crime type and time of day, that is how different crimes vary by different times of the day. It can be found the crime type of theft crimes is the most common crime type with more than 4000 incidents per hours during the period of peak hours from 12pm to 18pm. Harassment(more prevalent in the afternoon), criminal mischief, and assault(more prevalent in the evening and at night) are also common during the day in NYC.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-46-1.png" width="1056" /></p>
+<p>The second heat map shows the relationship between crime type and borough.Theft crimes, the most common incident, happens frequently in all borough, but most frequently in Manhattan with more than 30000 incidents. It can also be observed that harassment, criminal mischief, and assault are the common types of crime across boroughs, and they happens most frequently in Brooklyn.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-48-1.png" width="1056" /></p>
+<p>The third heat map shows the relationship between borough and time of day. It turns out that Brooklyn is the most dangerous borough and there are more than 3000 incidents per hour during periods of 12pm-12:59pm and 4pm-6:59pm. In addition, Manhattan also has high number of crime incidents during 12pm-6:59pm.</p>
 
+</div>
 </div>
             </section>
 

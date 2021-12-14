@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Interactive</title>
+    <script src="https://d3js.org/d3.v7.js"></script>
+  </head>
+
+
+ <input type="radio" name="borough" value="BRONX"> BRONX<br>
+  <input type="radio" name="borough" value="BROOKLYN"> BROOKLYN<br>
+  <input type="radio" name="borough" value="MANHATTAN"> MANHATTAN<br>
+  <input type="radio" name="borough" value="QUEENS"> QUEENS<br>
+  <input type="radio" name="borough" value="STATEN ISLAND"> STATEN ISLAND<br>
+  
+  <body>
+
+  <script>
+
+
+
+ var rowConverter = function (d) {
+  return {
+    CrimeType: d.CrimeType,
+    count: +d.count,
+    countm: +d.countm,
+    countb: +d.countb,
+    counti: +d.counti,                                                      
+    countx: +d.countx,                                                
+    countq: +d.countq}
+};  
+
+d3.csv("https://raw.githubusercontent.com/Ted5834314/NYC_Data/main/crimetype.csv", rowConverter)
+  .then(function(data) {
+
+  data.sort(function(a,b) {
+    return a.count-b.count
+});
+  var w = 600;
+  var h = 400;
+  var margin = {top: 25, right: 25, bottom: 25,
+      left: 200};
+  var innerWidth = w - margin.left - margin.right;
+  var innerHeight = h - margin.top - margin.bottom;
+
+  
+
+  var yScale = d3.scaleBand()
+      .domain(data.map(d => d.CrimeType))
+      .range([innerHeight, 0])
+      .paddingInner(.1);
+
+  var xScale = d3.scaleLinear()
+      .domain([0, 50000])
+      .range([0, innerWidth])
+
+  var xAxis = d3.axisBottom()
+      .scale(xScale);
+
+  var yAxis = d3.axisLeft()
+      .scale(yScale);
+
+
+  var svg = d3.select("body")
+    .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+
+
+  svg.append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", w)
+      .attr("height", h)
+      .attr("fill", "aliceblue");
+
+// add bars as a group
+
+  var bars = svg.append("g")
+      .attr("id", "plot")
+      .attr("transform", `translate (${margin.left}, ${margin.top})`)
+    .selectAll("rect")
+      .data(data);
+
+  bars.enter().append("rect")
+      .attr("x", d => 0)
+      .attr("y", d => yScale(d.CrimeType))
+      .attr("width", d => xScale(d.countb))
+      .attr("height",yScale.bandwidth())
+      .attr("fill", "lightgreen");
+  
+  var txt=svg.append("g").attr("id", "txt").selectAll("text").data(data);
+   txt.enter()
+      .append("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.countb) + margin.left)
+      .text(d => d.countb)
+      .attr("fill", "blue")
+      .attr("text-anchor", "middle");
+
+
+
+  svg.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", `translate (${margin.left}, ${h - margin.bottom})`)
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", `translate (${margin.left}, ${margin.top})`)
+      .call(yAxis);
+  var newbardata = [{month: "Jan", value: 300},
+                 {month: "Feb", value: 250},
+                 {month: "Mar", value: 200},
+                 {month: "Apr", value: 150},
+                 {month: "May", value: 100},
+                 {month: "Jun", value: 50}]
+ 
+  
+    d3.selectAll("input")
+        .on("click", function () {
+
+      var paraID = d3.select(this).attr("value");
+
+      if (paraID == "BRONX") {
+      d3.select("g").selectAll("rect").transition()
+  .duration(2000).attr("width", d => xScale(d.countx));
+  d3.select("g#txt").selectAll("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.countx) + margin.left)
+      .text(d => d.countx);
+      } else if(paraID=="BROOKLYN") {
+      d3.select("g").selectAll("rect").transition()
+  .duration(2000).attr("width", d => xScale(d.countb));
+   d3.select("g#txt").selectAll("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.countb) + margin.left)
+      .text(d => d.countb);
+      } else if(paraID=="MANHATTAN")  {
+      d3.select("g").selectAll("rect").transition()
+  .duration(2000).attr("width", d => xScale(d.countm));
+  d3.select("g#txt").selectAll("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.countm) + margin.left)
+      .text(d => d.countm);
+      } else if(paraID=="QUEENS")  {
+      d3.select("g").selectAll("rect").transition()
+  .duration(2000).attr("width", d => xScale(d.countq));
+  d3.select("g#txt").selectAll("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.countq) + margin.left)
+      .text(d => d.countq);
+      } else if(paraID=="STATEN ISLAND")  {
+      d3.select("g").selectAll("rect").transition()
+  .duration(2000).attr("width", d => xScale(d.counti));
+  d3.select("g#txt").selectAll("text")
+      .attr("y", d => yScale(d.CrimeType) + margin.bottom+ .7*yScale.bandwidth())
+      .attr("x", d => xScale(d.counti) + margin.left)
+      .text(d => d.counti);
+      } else if(paraID=="Hide") {
+      d3.select("g#txt").selectAll("text").style("visibility", "hidden");
+      } else {
+      d3.select("g#txt").selectAll("text").style("visibility", "visible");
+      }
+
+ });
+  })
+  .catch(function(error) {
+  
+
+  });
+
+
+
+
+
+    </script>
+  </body>
+<input type="radio" name="borough" value="Hide"> Hide Figure<br>
+<input type="radio" name="borough" value="Show"> Show Figure<br>
+</html>

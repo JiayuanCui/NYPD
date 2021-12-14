@@ -24,7 +24,7 @@
 <meta name="author" content="Jiayuan Cui, Yujie Zhou, Xuchen Wang" />
 
 
-<meta name="date" content="2021-12-09" />
+<meta name="date" content="2021-12-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -76,7 +76,12 @@
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
-<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
+<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a><ul>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#overview"><i class="fa fa-check"></i><b>5.1</b> Overview</a></li>
+<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#crime-cases-and-time"><i class="fa fa-check"></i><b>5.2</b> Crime Cases and Time</a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#crime-cases-and-location"><i class="fa fa-check"></i><b>5.3</b> Crime Cases and Location</a></li>
+<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#correlations"><i class="fa fa-check"></i><b>5.4</b> Correlations</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -100,19 +105,23 @@
             <section class="normal" id="section-">
 <div id="missing-values" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Missing values</h1>
-<p>Percentage Plot for Numeric columns in NYC crime cases dataset, where each row represents a crime case:</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="960" /></p>
-<p>In the missing pattern plot, there are only four missing patterns:</p>
-<p>1, missing transit_district and housing_psa</p>
-<p>2, missing transit_district</p>
-<p>3, missing housing_psa</p>
-<p>4, missing housing_psa, transit_district, jurisdiction_code and pd_cd</p>
-<p>pd_cd is the internal classification code</p>
-<p>We can see that there are no complete cases in this dataset, so all rows have missing values.</p>
-<p>It can be observed from the top graph that most of transit_district and housing_psa are missing, which can also be observed in the bottom right graph, where we can see that about 90% of data are missing both transit_district and housing_psa.</p>
-<p>Based on these massive missing cases, we can consider removing these two variables.</p>
-<p>It can also be observed that there are few cases where we are missing jurisdiction_code and pd_cd, and these two values are missing simultaneously. The jurisdiction code represents the jurisdiction responsible for the crime incident and pd_cd is the internal classification code.</p>
-<p>The reason for this phenomenon may be that pd_cd is a code relying on jurisdiction code. The other internal classification code ky_cd which is less granular than pd_cd has no missing values, so it is likely that pd_cd takes jurisdiction in to account when classifying while ky_cd does not.</p>
+<p>Missing pattern Plot for NYC crime data, both count and percentage plots:</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-16-1.png" width="960" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-17-1.png" width="960" /></p>
+<p>In the missing pattern plot, there are only two missing patterns:</p>
+<p>1, missing Borough</p>
+<p>2, missing Crime Category</p>
+<p>We can see that most of the cases are complete in this dataset, so all rows have missing values.</p>
+<p>It can be observed from the top graph that 800 rows are missing Borough, and very few rous are missing Crime Category. However given the vast amount of crimes we can see that they are barely visible in the percentage plot</p>
+<p>Also from the right part of the graph, almost 100% of rows are complete cases which have no missing values.</p>
+<p>Since there are too few missing cases for Category, there is no need to analyse pattern for it.</p>
+<p>Since there are still a few hundred cases with missing Borough, we can do some analysis on them</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>By the count plot, we can see that the major crime types missing borough are theft and homicide.</p>
+<p>By the percentage plot, We can see that over 90% of Homicide Crimes are missing borough information. This might because of the transportation of body, or that no borough wants to be record these vicious incidents so they just left it blank.</p>
+<p>So when doing analysis, we should avoid discussing the correlation between homicide and borough since most cases are missing this piece of information.</p>
+<p>For other categories, given such small percentage of missing cases, we can just ignore the missing cases and do analysis as usual.</p>
 
 </div>
             </section>

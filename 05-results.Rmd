@@ -1,5 +1,9 @@
 # Results
 
+##Overview
+```{r}
+knitr::opts_chunk$set(fig.width=11, fig.height=6) 
+```
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -7,6 +11,8 @@ library(ggridges)
 library(tidyverse)
 library(grid)
 library(data.table)
+library(scales)
+library(GGally)
 ```
 
 ```{r}
@@ -132,15 +138,19 @@ crimetype <- crime %>%
   na.omit
 ```
 
-
 ```{r}
 crimetype %>% 
   ggplot(aes(x = reorder(CrimeType,count), y = count)) +
-  geom_bar(stat = "identity", fill = "purple") +
-  labs(x ="Crime Type", y = "Number of crimes", title = "Crimes in New York") + 
-  coord_flip()
+  geom_bar(stat = "identity", fill = "orangered", alpha =0.8) +
+  labs(x ="Crime Type", y = "Number of Crimes", title = "Total Number of Crimes in NYC from Jan 2021 - Sept 2021") + 
+  coord_flip() + 
+  geom_text(aes(label=count),hjust=1,fontface="bold", size=3, color="#272626", alpha =0.7) +
+  theme_classic()
 ```
-Theft, harassment, assault and criminal mischief occurs much frequently in NYC.  
+
+Theft, harassment, assault and criminal mischief occurs much more frequently in NYC.  
+
+##Crime Cases and Time
 
 ```{r}
 crimedate <- crime %>%
@@ -151,9 +161,13 @@ crimedate <- crime %>%
 ```{r}
 crimedate %>%
   ggplot(aes(x=ExactDate, y=count)) +
-  geom_line(colour = "blue") + scale_x_date(date_breaks = "1 month") +
-  labs(x ="Date", y = "Number of crimes", title = "Crimes by day")
+  geom_line(colour = "#de2d26",size = 1) +
+  scale_x_date(date_breaks = "1 month") +
+  labs(x ="Date", y = "Number of Crimes", title = "Crimes by Day") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = -30, vjust = 1, hjust = 0)) 
 ```
+
 It can been seen most crime peaks occurred in the beginning of a month and the middle of a month. Crime incidents happened more frequently in summer month.
 
 ```{r}
@@ -163,28 +177,17 @@ crimemonth <- crime %>%
   summarize(count=n())
 ```
 
-
 ```{r}
 crimemonth %>% 
   ggplot(aes(x = month, y = count)) +
-  geom_col() +
-  labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
+  geom_col(fill = "#fb6a4a", alpha = 0.8) +
+  labs(x = "Month", y = "Number of Crimes", title = "Crimes by Month") +
+  theme_bw()
 ```
 
 
-```{r}
-crimeday <- crime %>% 
-  group_by(day) %>%
-  summarize(count=n())
-```
 
-```{r}
-crimeday %>%
-  ggplot(aes(x = day, y = count)) +
-  geom_col() +
-  labs(x = "Day of week", y = "Number of crimes", title = "Crimes by day of week")
-```
-Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Fridays and summer months have higher occurrence of crime incidents with respect to other corresponding time periods.
+Histograms shows that there indeed exists a pattern in the occurrence of crime with respect to the dimension of time. Summer months have higher occurrence of crime incidents with respect to other corresponding time periods.
 
 ```{r}
 crimetime <- crime %>%
@@ -194,35 +197,95 @@ crimetime <- crime %>%
 
 ```{r}
 ggplot(crimetime, aes(x = Time, y = count)) +
-  geom_line(colour = "blue", size = 1) +
+  geom_point(colour = "#a50f15") +
+  geom_line(colour = "#de2d26", size = 1) +
   scale_x_continuous(breaks=c(0:23)) +
-  ggtitle("The total number of crimes by time of day")
+  labs(x = "Time of Day", y = "Number of Crimes", title = "Total Number of Crimes by Time of Day") +
+  theme_bw()
 ```
+
 The latter parts of the day have higher occurrence of crime incidents. There is a peak of crime at hour 16, indicating more incidents take place during the periods 4:00pm - 4:59pm. There are less incidents in the morning periods (1am - 7am). In particular, very few crime incidents happen during the period of 5am.
+
+
+##Crime Cases and Location
 
 ```{r}
 borough <- crime %>%
   dplyr::select(BORO_NM,Longitude,Latitude,ExactDate) %>%
   na_if("") %>%
-  na.omit %>%
-  group_by(BORO_NM)  
-
-colnames(borough) <- c('Borough','Longitude','Latitude',"ExactDate")
+  na.omit
 ```
 
 ```{r}
 borough %>%
   ggplot(aes(x = ExactDate)) +
-  geom_histogram(binwidth=5) + scale_x_date(date_breaks = "3 week",date_labels =("%b%d")) + facet_wrap(~Borough)
+  geom_histogram(binwidth=5,aes(color=BORO_NM)) + scale_x_date(date_breaks = "1 month",date_labels =("%b%d")) + facet_wrap(~BORO_NM) + 
+  scale_colour_discrete("Borough") +
+  labs(x = "Month", y = "Number of Crimes", title = "Number of Crimes in Each Borough") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = -30, vjust = 1, hjust = 0)) 
+  
 ```
+
+```{r}
+borough %>% 
+  ggplot(aes(x = ExactDate))+
+  geom_line(stat='count',aes(color=BORO_NM),size=0.75)+
+  expand_limits(y=0)+
+  facet_wrap(~BORO_NM) +
+  scale_colour_discrete("Borough") +
+  labs(x = "Month", y = "Number of Crimes", title = "Number of Crimes in Each Borough") +
+  theme_classic()
+```
+
 Brooklyn has highest number of crime, and Staten Island has lowest. 
 
 ```{r}
-ggplot(borough, aes(x = Longitude, y = Latitude)) + geom_point(aes(colour = factor(Borough)), size = 0.1) + 
+ggplot(borough, aes(x = Longitude, y = Latitude)) + geom_point(aes(colour = factor(BORO_NM)), size = 0.5) + 
   theme_light(base_size = 10) + xlab("Longitude") + ylab("Latitude") +
-  ggtitle("Borough") + theme(plot.title=element_text(size = 16))
+  scale_colour_discrete("Borough") + 
+  ggtitle("Borough") + 
+  theme(plot.title=element_text(size = 16))
 ```
-There are lesser points landing in Staten Island area than other boroughs. 
+
+A New York City map by plotting each individual crime cases.
+
+```{r}
+ggplot(borough, aes(x = Longitude, y = Latitude)) +
+  geom_hex(bins=30)+
+  scale_fill_continuous(type = "viridis") +
+  scale_fill_gradient(name = "Number of Crimes", low = "#fee5d9", high = "#a50f15") +
+  theme_bw()
+```
+
+A heat map for all the crime cases. It can be seen that many regions in Brooklyn and Manhattan have very high crime counts.
+
+##Correlations
+
+```{r}
+parallel <- crime %>%
+  group_by(BORO_NM, CrimeType) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  pivot_wider(names_from = CrimeType, values_from = count)   
+compare <- parallel[1:5,] 
+compare['NA']<-NULL
+compare[is.na(compare)] = 0
+```
+
+
+```{r}
+compare %>%
+  ggparcoord(columns = c(2:17), groupColumn = 1, scale = "uniminmax",splineFactor=0.5) +
+  scale_colour_discrete("Borough") +
+  labs(x ="Crime Type", y = "Number of Crimes", title = "Major Crime by Borough") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 6, angle = -30, vjust = 1, hjust = 0)) 
+```
+
+From the parallel coordinates plot, we can observe that the pattern of Brooklyn and Queens are very similar, so they may form a cluster by the distribution of crime categories.
+
+Also, there seems to be a positive correlation between trepass and theft crimes, trepass and frauds. Police may need to find out the reason for such correlation.
 
 ```{r}
 crime1 <- crime %>%
@@ -236,8 +299,12 @@ crime1 <- crime %>%
 crime1 %>%
   ggplot(aes(x=CrimeType, y=Time)) +
   geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
-  labs(x="Crime Type", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip()
+  scale_fill_gradient(name = "Number of Crimes", low = "#fee5d9", high = "#a50f15") +
+  labs(x="Crime Type", y = "Time of day", title="Crime Type VS Time of Day") + coord_flip() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = -30, vjust = 1, hjust = 0)) 
 ```
+
 The first heat map shows the relationship between crime type and time of day, that is how different crimes vary by different times of the day. It can be found the crime type of theft crimes is the most common crime type with more than 4000 incidents per hours during the period of peak hours from 12pm to 18pm. Harassment(more prevalent in the afternoon), criminal mischief, and assault(more prevalent in the evening and at night) are also common during the day in NYC.
 
 ```{r}
@@ -252,8 +319,12 @@ crime2 <- crime %>%
 crime2 %>%
   ggplot(aes(x=CrimeType, y=BORO_NM)) +
   geom_tile(aes(fill=count)) +
-  labs(x="Crime Type", y = "Borough", title="Crime Type VS Borough") + coord_flip()
+  scale_fill_gradient(name = "Number of Crimes", low = "#fee5d9", high = "#a50f15") +
+  labs(x="Crime Type", y = "Borough", title="Crime Type VS Borough") + coord_flip() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = -30, vjust = 1, hjust = 0)) 
 ```
+
 The second heat map shows the relationship between crime type and borough.Theft crimes, the most common incident, happens frequently in all borough, but most frequently in Manhattan with more than 30000 incidents. It can also be observed that harassment, criminal mischief, and assault are the common types of crime across boroughs, and they happens most frequently in Brooklyn.
 
 ```{r}
@@ -268,23 +339,11 @@ crime3 <- crime %>%
 crime3 %>%
   ggplot(aes(x=BORO_NM, y=Time)) +
   geom_tile(aes(fill=count)) + scale_y_continuous(breaks=c(0:23)) +
-  labs(x="Borough", y = "Time of day", title="Borough VS Time of Day") + coord_flip()
+  scale_fill_gradient(name = "Number of Crimes", low = "#fee5d9", high = "#a50f15") +
+  labs(x="Borough", y = "Time of day", title="Borough VS Time of Day") + coord_flip() +
+  theme_classic() 
 ```
+
 The third heat map shows the relationship between borough and time of day. It turns out that Brooklyn is the most dangerous borough and there are more than 3000 incidents per hour during periods of 12pm-12:59pm and 4pm-6:59pm. In addition, Manhattan also has high number of crime incidents during 12pm-6:59pm.
 
-```{r}
-crime4 <- crime %>%
-  group_by(CrimeType,day) %>%
-  summarise(count=n()) %>%
-  na_if("") %>%
-  na.omit
-```
-
-```{r}
-crime4 %>%
-  ggplot(aes(x=CrimeType, y=day)) +
-  geom_tile(aes(fill=count)) +
-  labs(x="Crime Type", y = "Day of week", title="Crime Type VS Day of week") + coord_flip()
-```
-The fourth heat map shows the relationship between crime type and day of week. It can be found the crime type of theft crimes is still the most common crime type with higher number of incidents on weekdays than weekends. Whereas, assaults are more prevalent on weekends, and harassment happens frequently almsot every day.
 
