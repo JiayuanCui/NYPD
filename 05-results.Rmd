@@ -16,7 +16,7 @@ library(GGally)
 ```
 
 ```{r}
-NYCcrime<-read.csv("~/Desktop/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
+NYCcrime<-read.csv("C:/Users/wxc/Downloads/NYPD_Complaint_Data_Current__Year_To_Date_.csv",na.strings=c("","NA"))
 ```
 
 
