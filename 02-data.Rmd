@@ -2,13 +2,10 @@
 
 
 
-Jiayuan is mainly responsible for section 3 and 5
+Yujie is responsible for looking for and collecting the data. 
 
-Yujie is mainly responsible for section 1 2 and 7
+Our dataset in this project was collected from NYC Open Data, which provides free public data published by New York City agencies and other partners. The Report Date of the data we used represents the date the incident was actually reported to the NYPD. Latitude and Longitude Coordinates are provided in Global Coordinate System WGS 1984 decimal degrees. These data represent criminal offenses according to New York State Penal Law definitions. Moreover, our group downloaded NYPD Complaint Data Current (Year To Date) dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021), so the information is accurate and authoritative. Therefore, we chose to use this dataset.
 
-Xuchen is mainly responsible for section 4 and 6
-
-Our group downloaded NYPD Complaint Data Current (Year To Date) dataset provided by the New York City Police Department (NYPD), containing the data for all valid felony, misdemeanor, and violation crimes reported to NYPD for all complete quarters so far this year (2021). 
 
 Crime data for city of NYC available from NYC Open Data at: https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243 
 
