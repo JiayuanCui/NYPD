@@ -11,3 +11,5 @@ How does crime rate changes by location?
 Are there any correlation between crime types and time or crime types and location?
 
 Our final goal for this project is not only to help people living in New York City to identity and reduce the risk to encounter crimes, but also help NYPD and national institutions to deploy and allocate resources and capital in highly dangerous areas to control crimes.
+
+URL to book:https://jiayuancui.github.io/NYPD
