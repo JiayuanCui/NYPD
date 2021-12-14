@@ -1,4 +1,4 @@
-#Important Reminder! The code for section 6 is in test.html 
+# Important Reminder! The code for section 6 is in test.html 
 
 
 New York City, as the financial center of the United States, people from all walks of life populated here. Thus, to maintain a safe environment in the city is the most crucial task facing the government and institutions. In order to control the crimes, it should take as the priority to understand the distribution of crimes in NYC and identity the factors that would be associated with crime rate.
